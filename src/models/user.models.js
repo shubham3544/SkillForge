@@ -33,27 +33,25 @@ const userSchema = new mongoose.Schema(
       },
 
       avatar: {
-        type: string,
+        type: String,
         required: true,
       },
 
       coverImage: {
-         type: string,
-         required: true,
+         type: String,
       },
 
       refreshToken: {
-         type:string
+         type: String
       },
 
     },{timestamps: true});
 
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
 
-    if(!this.isModified("password")) return next();
+    if(!this.isModified("password")) return ;
 
-    this.password = await bcrypt.hash(this.password, 10);
-    next(); 
+    this.password = await bcrypt.hash(this.password, 10); 
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {

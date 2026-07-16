@@ -25,7 +25,7 @@ import { errorHandler } from "./middlewares/error.middleware.js";
 
 // routes declaration
 
-app.use("/api/v1",router);
+app.use("/api/v1", router);
 app.use(errorHandler);
 
 export default app;
