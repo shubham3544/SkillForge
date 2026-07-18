@@ -21,11 +21,14 @@ app.use(cookieParser());
 
 import healthRouter from "./routes/health.routes.js"
 import { errorHandler } from "./middlewares/error.middleware.js";
+import patternRouter from "./routes/pattern.routes.js";
+
 
 
 // routes declaration
 
 app.use("/api/v1", router);
 app.use(errorHandler);
+app.use("/api/v1/patterns", patternRouter);
 
 export default app;
