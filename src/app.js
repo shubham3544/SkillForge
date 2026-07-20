@@ -22,6 +22,7 @@ app.use(cookieParser());
 import healthRouter from "./routes/health.routes.js"
 import { errorHandler } from "./middlewares/error.middleware.js";
 import patternRouter from "./routes/pattern.routes.js";
+import dsaRouter from "./routes/dsa.routes.js";
 
 
 
@@ -30,5 +31,5 @@ import patternRouter from "./routes/pattern.routes.js";
 app.use("/api/v1", router);
 app.use(errorHandler);
 app.use("/api/v1/patterns", patternRouter);
-
+app.use("/api/v1/dsa", dsaRouter);
 export default app;
