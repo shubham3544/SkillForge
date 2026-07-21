@@ -8,55 +8,41 @@ const projectSchema = new Schema(
             required: true,
         },
 
-        title: {
+        githubRepo: {
             type: String,
             required: true,
             trim: true,
-            minlength: 2,
-            maxlength: 100,
         },
 
-        description: {
+        liveLink: {
             type: String,
             trim: true,
             default: "",
         },
-
-        githubUrl: {
-            type: String,
-            trim: true,
-            default: "",
-        },
-
-        liveUrl: {
-            type: String,
-            trim: true,
-            default: "",
-        },
-
-        techStack: [
-            {
-                type: String,
-                trim: true,
-            },
-        ],
 
         status: {
             type: String,
-            enum: ["Planning", "In Progress", "Completed", "On Hold"],
+            enum: [
+                "Planning",
+                "In Progress",
+                "Completed",
+                "On Hold",
+            ],
             default: "Planning",
         },
 
         startDate: {
             type: Date,
+            default: Date.now,
         },
 
         endDate: {
             type: Date,
         },
 
-        image: {
+        personalNotes: {
             type: String,
+            trim: true,
             default: "",
         },
     },
@@ -65,6 +51,15 @@ const projectSchema = new Schema(
     }
 );
 
-projectSchema.index({ user: 1, title: 1 }, { unique: true });
+projectSchema.index(
+    {
+        user: 1,
+        githubRepo: 1,
+    },
+    {
+        unique: true,
+    }
+);
 
 export const Project = mongoose.model("Project", projectSchema);
+
