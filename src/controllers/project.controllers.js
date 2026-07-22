@@ -82,9 +82,105 @@ const getAllProjects = asyncHandler(async (req, res) => {
     );
 });
 
+const getProjectById = asyncHandler(async(req,res) => {
+    const {projectId} = req.params;
+
+    const project = await Project.findOne({
+        _id : projectId,
+        user: req.user._id,
+    });
+
+    if(!project){
+        throw new ApiError(404,"Project not found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            project,
+            "Project fetched successfully"
+        )
+    );
+})
+
+const updateProject = asyncHandler(async (req, res) => {
+    const { projectId } = req.params;
+
+    const {
+        liveLink,
+        status,
+        startDate,
+        endDate,
+        personalNotes,
+    } = req.body;
+
+    const project = await Project.findOne({
+        _id: projectId,
+        user: req.user._id,
+    });
+
+    if (!project) {
+        throw new ApiError(404, "Project not found");
+    }
+
+    if (liveLink !== undefined) {
+        project.liveLink = liveLink;
+    }
+
+    if (status !== undefined) {
+        project.status = status;
+    }
+
+    if (startDate !== undefined) {
+        project.startDate = startDate;
+    }
+
+    if (endDate !== undefined) {
+        project.endDate = endDate;
+    }
+
+    if (personalNotes !== undefined) {
+        project.personalNotes = personalNotes;
+    }
+
+    await project.save();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            project,
+            "Project updated successfully"
+        )
+    );
+});
+
+const deleteProject = asyncHandler(async (req, res) => {
+    const { projectId } = req.params;
+
+    const project = await Project.findOneAndDelete({
+        _id: projectId,
+        user: req.user._id,
+    });
+
+    if (!project) {
+        throw new ApiError(404, "Project not found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "Project deleted successfully"
+        )
+    );
+});
+
 
 
 export {
     createProject,
     getAllProjects,
+    getProjectById,
+    updateProject,
+    deleteProject
 };
