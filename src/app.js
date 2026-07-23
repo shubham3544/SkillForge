@@ -23,7 +23,8 @@ import healthRouter from "./routes/health.routes.js"
 import { errorHandler } from "./middlewares/error.middleware.js";
 import patternRouter from "./routes/pattern.routes.js";
 import dsaRouter from "./routes/dsa.routes.js";
-import projectRouter from"./routes/project.routes.js"
+import projectRouter from"./routes/project.routes.js";
+import dashboardRouter from "./routes/dashboard.routes.js";
 
 
 // routes declaration
@@ -32,6 +33,7 @@ app.use("/api/v1", router);
 app.use("/api/v1/patterns", patternRouter);
 app.use("/api/v1/dsa", dsaRouter);
 app.use("/api/v1/projects", projectRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 
 app.use(errorHandler);
 export default app;
