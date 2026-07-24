@@ -1,5 +1,5 @@
 import { Project } from "../models/project.models.js";
-import { Pattern } from "../models/patterns.models.js";
+import { Pattern } from "../models/pattern.models.js";
 import { DSAProblem } from "../models/dsaProblem.models.js";
 
 const getProjectStats = async (userId) => {
@@ -19,37 +19,17 @@ const getProjectStats = async (userId) => {
         },
     ]);
 
-    const projectStats = {
-        total: 0,
-        planning: 0,
-        inProgress: 0,
-        completed: 0,
-        onHold: 0,
+    const statusMap = Object.fromEntries(
+        stats.map((item) => [item._id, item.count])
+    );
+
+    return {
+        total: stats.reduce((sum, item) => sum + item.count, 0),
+        planning: statusMap["Planning"] || 0,
+        inProgress: statusMap["In Progress"] || 0,
+        completed: statusMap["Completed"] || 0,
+        onHold: statusMap["On Hold"] || 0,
     };
-
-    stats.forEach((item) => {
-        projectStats.total += item.count;
-
-        switch (item._id) {
-            case "Planning":
-                projectStats.planning = item.count;
-                break;
-
-            case "In Progress":
-                projectStats.inProgress = item.count;
-                break;
-
-            case "Completed":
-                projectStats.completed = item.count;
-                break;
-
-            case "On Hold":
-                projectStats.onHold = item.count;
-                break;
-        }
-    });
-
-    return projectStats;
 };
 
 const getPatternStats = async (userId) => {
@@ -79,32 +59,16 @@ const getDSAStats = async (userId) => {
         },
     ]);
 
-    const dsaStats = {
-        solved: 0,
-        todo: 0,
-        revisit: 0,
-        total: 0,
+    const statusMap = Object.fromEntries(
+        stats.map((item) => [item._id, item.count])
+    );
+
+    return {
+        total: stats.reduce((sum, item) => sum + item.count, 0),
+        solved: statusMap["Solved"] || 0,
+        todo: statusMap["Todo"] || 0,
+        revisit: statusMap["Revisit"] || 0,
     };
-
-    stats.forEach((item) => {
-        dsaStats.total += item.count;
-
-        switch (item._id) {
-            case "Solved":
-                dsaStats.solved = item.count;
-                break;
-
-            case "Todo":
-                dsaStats.todo = item.count;
-                break;
-
-            case "Revisit":
-                dsaStats.revisit = item.count;
-                break;
-        }
-    });
-
-    return dsaStats;
 };
 
 const getOverviewService = async (userId) => {
@@ -123,4 +87,4 @@ const getOverviewService = async (userId) => {
 
 export {
     getOverviewService,
-};
+}; 

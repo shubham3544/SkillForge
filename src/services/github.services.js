@@ -24,6 +24,74 @@ const extractOwnerAndRepo = (githubRepo) => {
 };
 
 
+const fetchRepository = async (owner, repo) => {
+    try {
+        const response = await axios.get(
+            `https://api.github.com/repos/${owner}/${repo}`
+        );
+
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            switch (error.response.status) {
+                case 404:
+                    throw new ApiError(404, "GitHub repository not found");
+
+                case 403:
+                    throw new ApiError(
+                        403,
+                        "GitHub API rate limit exceeded. Please try again later."
+                    );
+
+                default:
+                    throw new ApiError(
+                        error.response.status,
+                        "GitHub API request failed"
+                    );
+            }
+        }
+
+        throw new ApiError(
+            500,
+            "Unable to connect to GitHub. Please try again later."
+        );
+    }
+};
+
+const fetchUserRepositories = async (owner) => {
+    try {
+        const response = await axios.get(
+            `https://api.github.com/users/${owner}/repos`
+        );
+
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            switch (error.response.status) {
+                case 404:
+                    throw new ApiError(404, "GitHub user not found");
+
+                case 403:
+                    throw new ApiError(
+                        403,
+                        "GitHub API rate limit exceeded. Please try again later."
+                    );
+
+                default:
+                    throw new ApiError(
+                        error.response.status,
+                        "GitHub API request failed"
+                    );
+            }
+        }
+
+        throw new ApiError(
+            500,
+            "Unable to connect to GitHub. Please try again later."
+        );
+    }
+};
+
 
 const normalizeGithubRepo = (githubRepo) => {
     const { owner, repo } = extractOwnerAndRepo(githubRepo);
@@ -41,45 +109,14 @@ const validateGithubRepo = async (githubRepo) => {
         throw new ApiError(400, "Invalid GitHub repository URL");
     }
 
-    try {
-        const response = await axios.get(
-            `https://api.github.com/repos/${owner}/${repo}`
-        );
-
-        return response.data;
-    } catch (error) {
-
-        if (error.response) {
-
-            switch (error.response.status) {
-
-                case 404:
-                    throw new ApiError(404, "GitHub repository not found");
-
-                case 403:
-                    throw new ApiError(
-                        403,
-                        "GitHub API rate limit exceeded. Please try again later."
-                    );
-
-                default:
-                    throw new ApiError(
-                        error.response.status,
-                        "GitHub API request failed"
-                    );
-            }
-
-        }
-
-        throw new ApiError(
-            500,
-            "Unable to connect to GitHub. Please try again later."
-        );
-    }
+    return await fetchRepository(owner, repo);
 };
+
 export {
     extractOwnerAndRepo,
     normalizeGithubRepo,
+    fetchRepository,
+    fetchUserRepositories,
     validateGithubRepo,
 };
 
