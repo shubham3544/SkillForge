@@ -1,6 +1,7 @@
 import { Project } from "../models/project.models.js";
 import { Pattern } from "../models/pattern.models.js";
 import { DSAProblem } from "../models/dsaProblem.models.js";
+import { extractOwnerAndRepo, fetchUserRepositories } from "./github.services.js";
 
 const getProjectStats = async (userId) => {
     const stats = await Project.aggregate([
