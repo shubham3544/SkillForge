@@ -99,9 +99,7 @@ const normalizeGithubRepo = (githubRepo) => {
     return `https://github.com/${owner}/${repo}`;
 };
 
-const getGithubStats = async (userId) => {
 
-};
 
 
 
@@ -122,5 +120,6 @@ export {
     fetchRepository,
     fetchUserRepositories,
     validateGithubRepo,
+   
 };
 
