@@ -1,6 +1,6 @@
 import { Project } from "../models/project.models.js";
 import { ApiError } from "../utils/ApiError.js";
-
+import { createActivity } from "./activity.services.js";
 import {
     validateGithubRepo,
     normalizeGithubRepo,
@@ -42,6 +42,17 @@ const createProjectService = async (userId, projectData) => {
         startDate,
         endDate,
         personalNotes,
+    });
+
+    await createActivity({
+        user:userId,
+        type: "PROJECT_CREATED",
+        message: `Created project ${repoData.name}`,
+        metadata: {
+            projectId: project._id,
+            projectName: repoData.name,
+            githubRepo: normalizedRepo,
+        },
     });
 
     return {
