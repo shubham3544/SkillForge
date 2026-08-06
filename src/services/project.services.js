@@ -69,6 +69,93 @@ const createProjectService = async (userId, projectData) => {
     };
 };
 
+const getAllProjectsService = async (userId) => {
+
+    const projects = await Project.find({
+        user: userId,
+    }).sort({
+        createdAt: -1,
+    });
+
+    return projects;
+};
+
+const getProjectByIdService = async (userId, projectId) => {
+
+    const project = await Project.findOne({
+        _id: projectId,
+        user: userId,
+    });
+
+    if (!project) {
+        throw new ApiError(404, "Project not found");
+    }
+
+    return project;
+};
+
+const updateProjectService = async (userId, projectId, projectData) => {
+
+    const {
+        liveLink,
+        status,
+        startDate,
+        endDate,
+        personalNotes,
+    } = projectData;
+
+    const project = await Project.findOne({
+        _id: projectId,
+        user: userId,
+    });
+
+    if (!project) {
+        throw new ApiError(404, "Project not found");
+    }
+
+    if (liveLink !== undefined) {
+        project.liveLink = liveLink;
+    }
+
+    if (status !== undefined) {
+        project.status = status;
+    }
+
+    if (startDate !== undefined) {
+        project.startDate = startDate;
+    }
+
+    if (endDate !== undefined) {
+        project.endDate = endDate;
+    }
+
+    if (personalNotes !== undefined) {
+        project.personalNotes = personalNotes;
+    }
+
+    await project.save();
+
+    return project;
+};
+
+const deleteProjectService = async (userId, projectId) => {
+
+    const project = await Project.findOneAndDelete({
+        _id: projectId,
+        user: userId,
+    });
+
+    if (!project) {
+        throw new ApiError(404, "Project not found");
+    }
+
+    return project;
+};
 export {
     createProjectService,
+    getAllProjectsService,
+    getProjectByIdService,
+    updateProjectService,
+    deleteProjectService,
+
 };
