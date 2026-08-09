@@ -1,5 +1,6 @@
 import { Pattern } from "../models/patterns.models.js";
 import { ApiError } from "../utils/ApiError.js";
+import { createActivity } from "./activity.services.js";
 
 const createPatternService = async (userId, patternData) =>{
 
@@ -31,6 +32,16 @@ const createPatternService = async (userId, patternData) =>{
         description,
         color,
     });
+
+    await createActivity({
+    user: userId,
+    type: "PATTERN_CREATED",
+    message: `Created pattern ${pattern.name}`,
+    metadata: {
+        patternId: pattern._id,
+        patternName: pattern.name,
+    },
+});
 
     return pattern;
 };
@@ -90,6 +101,16 @@ const updatePatternService = async (userId, patternId, patternData) => {
 
     await pattern.save();
 
+      await createActivity({
+        user: userId,
+        type: "PATTERN_UPDATED",
+        message: `Updated pattern ${pattern.name}`,
+        metadata: {
+            patternId: pattern._id,
+            patternName: pattern.name,
+        },
+    });
+
     return pattern;
 };
 
@@ -103,6 +124,21 @@ const deletePatternService = async (userId, patternId) => {
     if (!pattern) {
         throw new ApiError(404, "Pattern not found");
     }
+
+    await Pattern.deleteOne({
+        _id: patternId,
+        user: userId,
+    });
+
+    await createActivity({
+        user: userId,
+        type: "PATTERN_DELETED",
+        message: `Deleted pattern ${pattern.name}`,
+        metadata: {
+            patternId: pattern._id,
+            patternName: pattern.name,
+        },
+    });
 
     return pattern;
 };
