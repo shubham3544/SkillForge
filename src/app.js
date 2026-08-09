@@ -25,7 +25,7 @@ import patternRouter from "./routes/pattern.routes.js";
 import dsaRouter from "./routes/dsa.routes.js";
 import projectRouter from"./routes/project.routes.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
-
+import resumeRouter from "./routes/resume.routes.js";
 
 
 // routes declaration
@@ -35,6 +35,7 @@ app.use("/api/v1/patterns", patternRouter);
 app.use("/api/v1/dsa", dsaRouter);
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
+app.use("/api/v1/resumes", resumeRouter);
 
 
 app.use(errorHandler);
