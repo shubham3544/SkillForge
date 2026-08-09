@@ -113,6 +113,8 @@ const updateProjectService = async (userId, projectId, projectData) => {
         throw new ApiError(404, "Project not found");
     }
 
+    const oldStatus = project.status;
+
     if (liveLink !== undefined) {
         project.liveLink = liveLink;
     }
@@ -135,6 +137,30 @@ const updateProjectService = async (userId, projectId, projectData) => {
 
     await project.save();
 
+    if(oldStatus !== "Completed" && project.status === "Completed")
+    {
+        await createActivity({
+            user: userId,
+            type: "PROJECT_COMPLETED",
+            message : `Completed project ${project.githubRepo}`,
+            metadata: {
+                projectId: project._id,
+                githubRepo: project.githubRepo,
+            },
+        });
+    } else{
+      
+        await createActivity({
+        user: userId,
+        type: "PROJECT_UPDATED",
+        message: `Updated project ${project.githubRepo}`,
+        metadata: {
+            projectId: project._id,
+            githubRepo: project.githubRepo,
+        },
+        });
+    }
+
     return project;
 };
 
@@ -149,6 +175,21 @@ const deleteProjectService = async (userId, projectId) => {
         throw new ApiError(404, "Project not found");
     }
 
+    await project.deleteOne({
+        _id: projectId,
+        user: userId,
+    });
+
+    await createActivity({
+        user: userId,
+        type: "PROJECT_DELETED",
+        message: `Deleted project${project.githubRepo}`,
+        metadata: {
+            projectId: project._id,
+            githubRepo: project.githubRepo,
+        },
+    });
+    
     return project;
 };
 export {
