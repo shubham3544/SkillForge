@@ -2,6 +2,7 @@ import { Project } from "../models/project.models.js";
 import { Pattern } from "../models/patterns.models.js";
 import { DSAProblem } from "../models/dsaProblem.models.js";
 import { extractOwnerAndRepo, fetchUserRepositories, } from "./github.services.js";
+import { getRecentActivities } from "./activity.services.js";
 
 const getProjectStats = async (userId) => {
     const stats = await Project.aggregate([
@@ -162,7 +163,18 @@ const getOverviewService = async (userId) => {
     };
 };
 
+const getDashboardActivitiesService = async(userId) => {
+    
+    const activities = await getRecentActivities(
+        userId,
+        10
+    );
+
+    return activities;
+}
+
 export {
     getOverviewService,
     getGithubStats,
+    getDashboardActivitiesService,
 }; 

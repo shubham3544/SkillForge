@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import {getOverviewService , getGithubStats} from "../services/dashboard.services.js";
+import {getOverviewService , getGithubStats, getDashboardActivitiesService} from "../services/dashboard.services.js";
 
 const getOverview  = asyncHandler(async(req,res)=> {
     const overview = await getOverviewService(req.user._id);
@@ -26,8 +26,24 @@ const getGithubDashboard = asyncHandler(async (req, res) => {
     );
 });
 
+const getDashboardActivities = asyncHandler(async(req,res) => {
+    
+    const activities = await getDashboardActivitiesService(
+        req.user._id,
+    )
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            activities,
+            "Recent activities fetched Successfully"
+        )
+    );
+});
+
 
 
 export {getOverview,
-    getGithubDashboard
+    getGithubDashboard,
+    getDashboardActivities,
 };
