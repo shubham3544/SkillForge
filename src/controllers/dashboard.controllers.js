@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import {getOverviewService , getGithubStats, getDashboardActivitiesService} from "../services/dashboard.services.js";
+import {getOverviewService , getGithubStats, getDashboardActivitiesService,getLeetCodeDashboardService} from "../services/dashboard.services.js";
 
 const getOverview  = asyncHandler(async(req,res)=> {
     const overview = await getOverviewService(req.user._id);
@@ -41,9 +41,25 @@ const getDashboardActivities = asyncHandler(async(req,res) => {
     );
 });
 
+const getLeetCodeDashboard = asyncHandler(async (req, res) => {
+
+    const leetcode = await getLeetCodeDashboardService(
+        req.user._id
+    );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            leetcode,
+            "LeetCode dashboard fetched successfully"
+        )
+    );
+});
+
 
 
 export {getOverview,
     getGithubDashboard,
     getDashboardActivities,
+    getLeetCodeDashboard,
 };

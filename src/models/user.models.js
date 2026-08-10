@@ -45,6 +45,12 @@ const userSchema = new mongoose.Schema(
          type: String
       },
 
+      leetcodeUsername : {
+        type: String,
+        trim: true,
+        default: "",
+      },
+
     },{timestamps: true});
 
 userSchema.pre("save", async function () {

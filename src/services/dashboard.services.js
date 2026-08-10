@@ -3,6 +3,8 @@ import { Pattern } from "../models/patterns.models.js";
 import { DSAProblem } from "../models/dsaProblem.models.js";
 import { extractOwnerAndRepo, fetchUserRepositories, } from "./github.services.js";
 import { getRecentActivities } from "./activity.services.js";
+import { getLeetCodeStats } from "./leetcode.services.js";
+import { User } from "../models/user.models.js";
 
 const getProjectStats = async (userId) => {
     const stats = await Project.aggregate([
@@ -173,8 +175,36 @@ const getDashboardActivitiesService = async(userId) => {
     return activities;
 }
 
+const getLeetCodeDashboardService = async (userId) => {
+
+    const user = await User.findById(userId);
+
+    if (!user?.leetcodeUsername) {
+        return {
+            connected: false,
+            username: null,
+            totalSolved: 0,
+            easy: 0,
+            medium: 0,
+            hard: 0,
+        };
+    }
+
+    const stats = await getLeetCodeStats(
+        user.leetcodeUsername
+    );
+
+    return {
+        connected: true,
+        username: user.leetcodeUsername,
+        ...stats,
+    };
+};
+
+
 export {
     getOverviewService,
     getGithubStats,
     getDashboardActivitiesService,
+    getLeetCodeDashboardService,
 }; 
