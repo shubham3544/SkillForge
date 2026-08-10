@@ -1,6 +1,9 @@
 import { Resume } from "../models/resume.models.js";
 import { ApiError } from "../utils/ApiError.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary,
+         deleteFromCloudinary,
+ } from "../utils/cloudinary.js";
+ import { createActivity } from "./activity.services.js";
 
 const createResumeService = async (userId, file , name) => {
     
@@ -35,6 +38,16 @@ const createResumeService = async (userId, file , name) => {
         fileUrl: cloudinaryResponse.secure_url,
         publicId: cloudinaryResponse.public_id,
         isPrimary: resumeCount === 0,
+    });
+
+    await createActivity({
+        user: userId,
+        type: "RESUME_UPLOADED",
+        message: `Uploaded resume ${resume.name}`,
+        metadata: {
+            resumeId : resume._id,
+            resumeName: resume.name,
+        },
     });
 
     return resume;
@@ -94,6 +107,16 @@ const setPrimaryResumeService = async (userId, resumeId) => {
 
     await resume.save();
 
+    await createActivity({
+        user: userId,
+        type: "RESUME_PRIMARY",
+        message: `Set ${resume.name} as Primary Resume`,
+        metadata: {
+            resumeId : resume._id,
+            resumeName: resume.name,
+        }
+    })
+
     return resume;
 };
 
@@ -109,9 +132,28 @@ const deleteResumeService = async (userId, resumeId) => {
         throw new ApiError(404,"Resume not found");
     }
 
+    const cloudinaryResponse = await deleteFromCloudinary(
+        resume.publicId
+    );
+
+    if(!cloudinaryResponse)
+    {
+        throw new ApiError(500,"Failed to delete the resume from cloudinary");
+    }
+
     await Resume.deleteOne({
         _id: resumeId,
         user: userId,
+    });
+
+    await createActivity({
+        user: userId,
+        type: "RESUME_DELETED",
+        message: `Deleted resume${resume.name}`,
+        metadata: {
+            resumeId: resume._id,
+            resumeName: resume.name,
+        },
     });
 
     return resume;
