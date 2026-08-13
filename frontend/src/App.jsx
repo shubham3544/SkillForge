@@ -1,6 +1,7 @@
 import FeatureCard from "./components/Landing/FeatureCard";
+import FinalCTA from "./components/Landing/FinalCTA";
 import JourneySection from "./components/Landing/JourneySection";
-
+import Footer from "./components/Landing/Footer";
 function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -155,8 +156,11 @@ function App() {
               </section> 
 
               <JourneySection />
+              <FinalCTA />
 
        </main>
+
+       <Footer />
 
     </div>
   );
