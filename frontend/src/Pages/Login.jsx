@@ -1,9 +1,10 @@
 import { useState,  useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import AuthContext from "../context/AuthContext.jsx";
 
 function Login() {
     const {login} = useContext(AuthContext);
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error,setError] = useState("");
@@ -17,6 +18,8 @@ function Login() {
                 password,
             });
             console.log(data);
+
+            navigate("/dashboard");
         } catch (error) {
             console.log(error);
 
@@ -85,12 +88,12 @@ function Login() {
                         </div>
                      )}
 
-                     <button type="sumbit" className="mt-7 w-full  rounded-lg bg-blue-600 py-3 font-medium transition hover:bg-blue-500">
+                     <button type="submit" className="mt-7 w-full  rounded-lg bg-blue-600 py-3 font-medium transition hover:bg-blue-500">
                       Login
                      </button>
 
                      <p className="mt-6 text-center text-sm text-slate-400">
-                      Don't have an account?("")
+                      Don't have an account?
                      
 
                      <Link to= "/register"

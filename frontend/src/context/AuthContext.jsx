@@ -1,37 +1,76 @@
-import { loginUser, logoutUser} from "../api/auth.api.js";
-import { createContext , useState } from "react";
+import {
+  createContext,
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  loginUser,
+  logoutUser,
+  refreshToken,
+} from "../api/auth.api";
 
 const AuthContext = createContext();
 
-export function AuthProvider({children}) {
-    
-    const [user, setUser] = useState(null);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading , setLoading] = useState(true);
 
-    const login = async (Credentials) => {
-        const data = await loginUser(Credentials);
+  const login = async (credentials) => {
+    const data = await loginUser(credentials);
 
-        setUser(data.data.user);
+    const loggedInUser = data.data.user;
 
-        return data;
-    }
+    setUser(loggedInUser);
 
-    const logout = async() => {
-        await logoutUser();
-
-        setUser(null);
-    }
-
-    return (
-        <AuthContext.Provider
-        value={{
-            user,
-            login,
-            logout,
-        }}
-        >
-            {children}
-        </AuthContext.Provider>
+    localStorage.setItem(
+      "user",
+      JSON.stringify(loggedInUser)
     );
+
+    return data;
+  };
+
+  const logout = async () => {
+    await logoutUser();
+
+    setUser(null);
+    localStorage.removeItem("user");
+  };
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        await refreshToken();
+
+        const storedUser = localStorage.getItem("user");
+
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch {
+        localStorage.removeItem("user");
+        setUser(null);
+      } finally{
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export default AuthContext;
