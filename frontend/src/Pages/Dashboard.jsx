@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getDashboardOverview } from "../api/dashboard.api.js";
-
+import StatCard from "../components/Dashboard/StatCard.jsx";
 
 function Dashboard() {
 
@@ -96,89 +96,58 @@ function Dashboard() {
             </div>
 
 
+            
+
             {/* Overview Cards */}
 
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-
-
-                {/* DSA Card */}
-
-                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-
-                    <p className="text-sm text-slate-400">
-                        DSA Problems
-                    </p>
-
-                    <div className="mt-4">
-
-                        <span className="text-4xl font-bold">
-                            {overview.dsa.solved}
-                        </span>
-
-                        <span className="ml-2 text-slate-500">
-                            / {overview.dsa.total}
-                        </span>
-
-                    </div>
-
-                    <p className="mt-2 text-sm text-slate-400">
-                        Problems solved
-                    </p>
-
-                </div>
-
-
-                {/* Patterns Card */}
-
-                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-
-                    <p className="text-sm text-slate-400">
-                        Patterns
-                    </p>
-
-                    <div className="mt-4">
-
-                        <span className="text-4xl font-bold">
-                            {overview.patterns.total}
-                        </span>
-
-                    </div>
-
-                    <p className="mt-2 text-sm text-slate-400">
-                        Patterns created
-                    </p>
-
-                </div>
-
-
-                {/* Projects Card */}
-
-                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-
-                    <p className="text-sm text-slate-400">
-                        Projects
-                    </p>
-
-                    <div className="mt-4">
-
-                        <span className="text-4xl font-bold">
-                            {overview.projects.total}
-                        </span>
-
-                    </div>
-
-                    <p className="mt-2 text-sm text-slate-400">
-                        Total projects
-                    </p>
-
-                </div>
-
-
+            <div className="
+                grid
+                grid-cols-1
+                gap-5
+                md:grid-cols-2
+                lg:grid-cols-3
+            ">
+            
+               <StatCard
+                   title="DSA Problems"
+                   value={`${overview.dsa.solved} / ${overview.dsa.total}`}
+                   subtitle={`${overview.dsa.todo} problems remaining`}
+                   progress={
+                       overview.dsa.total > 0
+                           ? Math.round(
+                               (overview.dsa.solved /
+                                   overview.dsa.total) * 100
+                           )
+                           : 0
+                   }
+                   icon="◈"
+               />
+                
+            
+            
+                <StatCard
+                    title="Patterns"
+                    value={overview.patterns.total}
+                    subtitle="Patterns created"
+                    icon="◆"
+                />
+            
+            
+               <StatCard
+                    title="Projects"
+                    value={overview.projects.total}
+                    subtitle={`
+                        ${overview.projects.inProgress} in progress •
+                        ${overview.projects.completed} completed
+                    `}
+                    icon="◇"
+                />
+            
             </div>
-
-        </div>
-    );
-}
+            
+                    </div>
+                );
+            }
 
 
 export default Dashboard;
