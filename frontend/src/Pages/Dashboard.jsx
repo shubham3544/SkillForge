@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
-import { getDashboardOverview } from "../api/dashboard.api.js";
+import { getDashboardOverview,
+         getLeetCodeDashboard
+ } from "../api/dashboard.api.js";
 import StatCard from "../components/Dashboard/StatCard.jsx";
+import LeetCodeCard from "../components/Dashboard/LeetCodeCard.jsx";
 
-function Dashboard() {
+function Dashboard() { 
 
     const [overview, setOverview] = useState(null);
+    const [leetcode, setLeetcode] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -23,6 +27,15 @@ function Dashboard() {
                 );
 
                 setOverview(response.data);
+
+                const leetcodeResponse = await getLeetCodeDashboard();
+
+                console.log(
+                    "LeetCode Dashboard:",
+                    leetcodeResponse
+                );
+
+                setLeetcode(leetcodeResponse.data);
 
             } catch (error) {
 
@@ -142,6 +155,18 @@ function Dashboard() {
                     `}
                     icon="◇"
                 />
+
+                {/* LeetCode */}
+
+                <div className="mt-6">
+                
+                    {leetcode && (
+                        <LeetCodeCard
+                            leetcode={leetcode}
+                        />
+                    )}
+                
+                </div>
             
             </div>
             
