@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { getDashboardOverview,
-         getLeetCodeDashboard
+         getLeetCodeDashboard,
+         getGithubOverview,
  } from "../api/dashboard.api.js";
 import StatCard from "../components/Dashboard/StatCard.jsx";
 import LeetCodeCard from "../components/Dashboard/LeetCodeCard.jsx";
+import GithubCard from "../components/Dashboard/GithubCard.jsx";
 
 function Dashboard() { 
 
     const [overview, setOverview] = useState(null);
     const [leetcode, setLeetcode] = useState(null);
+    const [github , setGithub] = useState(null);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -36,6 +40,15 @@ function Dashboard() {
                 );
 
                 setLeetcode(leetcodeResponse.data);
+
+                const githubResponse = await getGithubOverview() ;
+
+                console.log(
+                    "Github Dashboard:",
+                    githubResponse
+                );
+
+                setGithub(githubResponse.data);
 
             } catch (error) {
 
@@ -163,6 +176,18 @@ function Dashboard() {
                     {leetcode && (
                         <LeetCodeCard
                             leetcode={leetcode}
+                        />
+                    )}
+                
+                </div>
+
+                {/* GitHub */}
+
+                <div className="mt-6">
+                
+                    {github && (
+                        <GithubCard
+                            github={github}
                         />
                     )}
                 
