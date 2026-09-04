@@ -1,3 +1,5 @@
+import githubLogo from "../../assets/github.png";
+
 function GithubCard({ github }) {
 
     const {
@@ -58,7 +60,11 @@ function GithubCard({ github }) {
                         text-lg
                     "
                 >
-                    ◇
+                    <img
+    src={githubLogo}
+    alt="GitHub"
+    className="h-6 w-6 object-contain"
+/>
                 </div>
 
             </div>

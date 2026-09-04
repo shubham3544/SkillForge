@@ -1,3 +1,5 @@
+import leetCodeLogo from "../../assets/leetcode.png"
+
 function LeetCodeCard({ leetcode }) {
 
     const totalSolved = leetcode.totalSolved;
@@ -109,7 +111,7 @@ function LeetCodeCard({ leetcode }) {
                         text-lg
                     "
                 >
-                    ◉
+                    <img src={leetCodeLogo} alt="LeetCode"className="h-6 w-6"/>
                 </div>
 
             </div>

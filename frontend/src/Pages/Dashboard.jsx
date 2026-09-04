@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
-import { getDashboardOverview,
-         getLeetCodeDashboard,
-         getGithubOverview,
- } from "../api/dashboard.api.js";
+
+import {
+    getDashboardOverview,
+    getLeetCodeDashboard,
+    getGithubOverview,
+} from "../api/dashboard.api.js";
+
 import StatCard from "../components/Dashboard/StatCard.jsx";
 import LeetCodeCard from "../components/Dashboard/LeetCodeCard.jsx";
 import GithubCard from "../components/Dashboard/GithubCard.jsx";
 
-function Dashboard() { 
+
+function Dashboard() {
 
     const [overview, setOverview] = useState(null);
     const [leetcode, setLeetcode] = useState(null);
-    const [github , setGithub] = useState(null);
+    const [github, setGithub] = useState(null);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -23,6 +27,8 @@ function Dashboard() {
 
             try {
 
+                // Dashboard Overview
+
                 const response = await getDashboardOverview();
 
                 console.log(
@@ -32,23 +38,36 @@ function Dashboard() {
 
                 setOverview(response.data);
 
-                const leetcodeResponse = await getLeetCodeDashboard();
+
+                // LeetCode
+
+                const leetcodeResponse =
+                    await getLeetCodeDashboard();
 
                 console.log(
                     "LeetCode Dashboard:",
                     leetcodeResponse
                 );
 
-                setLeetcode(leetcodeResponse.data);
+                setLeetcode(
+                    leetcodeResponse.data
+                );
 
-                const githubResponse = await getGithubOverview() ;
+
+                // GitHub
+
+                const githubResponse =
+                    await getGithubOverview();
 
                 console.log(
                     "Github Dashboard:",
                     githubResponse
                 );
 
-                setGithub(githubResponse.data);
+                setGithub(
+                    githubResponse.data
+                );
+
 
             } catch (error) {
 
@@ -61,6 +80,7 @@ function Dashboard() {
                     "Unable to load dashboard data."
                 );
 
+
             } finally {
 
                 setLoading(false);
@@ -69,15 +89,25 @@ function Dashboard() {
 
         };
 
+
         fetchDashboard();
 
     }, []);
 
 
+    // Loading State
+
     if (loading) {
 
         return (
-            <div className="flex min-h-[60vh] items-center justify-center">
+            <div
+                className="
+                    flex
+                    min-h-[60vh]
+                    items-center
+                    justify-center
+                "
+            >
 
                 <p className="text-slate-400">
                     Loading dashboard...
@@ -89,10 +119,19 @@ function Dashboard() {
     }
 
 
+    // Error State
+
     if (error) {
 
         return (
-            <div className="flex min-h-[60vh] items-center justify-center">
+            <div
+                className="
+                    flex
+                    min-h-[60vh]
+                    items-center
+                    justify-center
+                "
+            >
 
                 <p className="text-red-400">
                     {error}
@@ -105,6 +144,7 @@ function Dashboard() {
 
 
     return (
+
         <div>
 
             {/* Dashboard Header */}
@@ -122,44 +162,51 @@ function Dashboard() {
             </div>
 
 
-            
-
             {/* Overview Cards */}
 
-            <div className="
-                grid
-                grid-cols-1
-                gap-5
-                md:grid-cols-2
-                lg:grid-cols-3
-            ">
-            
-               <StatCard
-                   title="DSA Problems"
-                   value={`${overview.dsa.solved} / ${overview.dsa.total}`}
-                   subtitle={`${overview.dsa.todo} problems remaining`}
-                   progress={
-                       overview.dsa.total > 0
-                           ? Math.round(
-                               (overview.dsa.solved /
-                                   overview.dsa.total) * 100
-                           )
-                           : 0
-                   }
-                   icon="◈"
-               />
-                
-            
-            
+            <div
+                className="
+                    grid
+                    grid-cols-1
+                    gap-5
+                    md:grid-cols-2
+                    lg:grid-cols-3
+                "
+            >
+
+                {/* DSA */}
+
+                <StatCard
+                    title="DSA Problems"
+                    value={`${overview.dsa.solved} / ${overview.dsa.total}`}
+                    subtitle={`${overview.dsa.todo} problems remaining`}
+                    progress={
+                        overview.dsa.total > 0
+                            ? Math.round(
+                                (
+                                    overview.dsa.solved /
+                                    overview.dsa.total
+                                ) * 100
+                            )
+                            : 0
+                    }
+                    icon="◈"
+                />
+
+
+                {/* Patterns */}
+
                 <StatCard
                     title="Patterns"
                     value={overview.patterns.total}
                     subtitle="Patterns created"
                     icon="◆"
                 />
-            
-            
-               <StatCard
+
+
+                {/* Projects */}
+
+                <StatCard
                     title="Projects"
                     value={overview.projects.total}
                     subtitle={`
@@ -169,35 +216,45 @@ function Dashboard() {
                     icon="◇"
                 />
 
+            </div>
+
+
+            {/* Developer Activity */}
+
+            <div
+                className="
+                    mt-6
+                    grid
+                    grid-cols-1
+                    gap-6
+                    lg:grid-cols-2
+                "
+            >
+
                 {/* LeetCode */}
 
-                <div className="mt-6">
-                
-                    {leetcode && (
-                        <LeetCodeCard
-                            leetcode={leetcode}
-                        />
-                    )}
-                
-                </div>
+                {leetcode && (
+                    <LeetCodeCard
+                        leetcode={leetcode}
+                    />
+                )}
+
 
                 {/* GitHub */}
 
-                <div className="mt-6">
-                
-                    {github && (
-                        <GithubCard
-                            github={github}
-                        />
-                    )}
-                
-                </div>
-            
+                {github && (
+                    <GithubCard
+                        github={github}
+                    />
+                )}
+
             </div>
-            
-                    </div>
-                );
-            }
+
+        </div>
+
+    );
+
+}
 
 
 export default Dashboard;
