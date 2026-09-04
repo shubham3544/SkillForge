@@ -4,11 +4,13 @@ import {
     getDashboardOverview,
     getLeetCodeDashboard,
     getGithubOverview,
+    getDashboardActivities,
 } from "../api/dashboard.api.js";
 
 import StatCard from "../components/Dashboard/StatCard.jsx";
 import LeetCodeCard from "../components/Dashboard/LeetCodeCard.jsx";
 import GithubCard from "../components/Dashboard/GithubCard.jsx";
+import RecentActivity from "../components/Dashboard/RecentActivity.jsx";
 
 
 function Dashboard() {
@@ -16,6 +18,7 @@ function Dashboard() {
     const [overview, setOverview] = useState(null);
     const [leetcode, setLeetcode] = useState(null);
     const [github, setGithub] = useState(null);
+    const [activities, setActivities] = useState([]);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -29,14 +32,17 @@ function Dashboard() {
 
                 // Dashboard Overview
 
-                const response = await getDashboardOverview();
+                const response =
+                    await getDashboardOverview();
 
                 console.log(
                     "Dashboard Overview:",
                     response
                 );
 
-                setOverview(response.data);
+                setOverview(
+                    response.data
+                );
 
 
                 // LeetCode
@@ -69,6 +75,20 @@ function Dashboard() {
                 );
 
 
+                // Recent Activities
+
+                const activityResponse =
+                    await getDashboardActivities();
+
+                console.log(
+                    "Dashboard Activities:",
+                    activityResponse
+                );
+
+                setActivities(
+                    activityResponse.data
+                );
+
             } catch (error) {
 
                 console.error(
@@ -79,7 +99,6 @@ function Dashboard() {
                 setError(
                     "Unable to load dashboard data."
                 );
-
 
             } finally {
 
@@ -247,6 +266,17 @@ function Dashboard() {
                         github={github}
                     />
                 )}
+
+            </div>
+
+
+            {/* Recent Activity */}
+
+            <div className="mt-6">
+
+                <RecentActivity
+                    activities={activities}
+                />
 
             </div>
 
