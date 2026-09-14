@@ -1,13 +1,15 @@
 import { useState } from "react";
 
-function ProjectForm({ onSubmit, onCancel, loading }) {
+function ProjectForm({ onSubmit, onCancel, loading, initialData}) {
     const [formData, setFormData] = useState({
-        githubRepo: "",
-        liveLink: "",
-        status: "Planning",
-        startDate: "",
-        endDate: "",
-        personalNotes: "",
+        githubRepo: initialData?.githubRepo || "",
+        liveLink:  initialData?.liveLink ||"",
+        status:    initialData?.status||"Planning",
+        startDate:  initialData?.startDate
+                    ? initialData.startDate.slice(0,10) : "",
+        endDate:    initialData.endDate
+                    ? initialData.endDate.slice(0,10) : "",
+        personalNotes: initialData?.personalNotes ||  "",
     });
 
     const handleChange = (e) => {

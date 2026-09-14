@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import {
     createProject,
     getAllProjects,
+    updateProject,
+    deleteProject,
 } from "../api/project.api.js";
 
 import ProjectCard from "../components/Projects/ProjectCard.jsx";
@@ -10,12 +12,18 @@ import ProjectForm from "../components/Projects/ProjectForm.jsx";
 
 function Projects() {
     const [projects, setProjects] = useState([]);
+
     const [loading, setLoading] = useState(true);
+    const [creating, setCreating] = useState(false);
+    const [updating, setUpdating] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+
     const [error, setError] = useState("");
 
     const [showForm, setShowForm] = useState(false);
-    const [creating, setCreating] = useState(false);
+    const [editingProject, setEditingProject] = useState(null);
 
+    // Fetch all projects
     const fetchProjects = async () => {
         try {
             setError("");
@@ -24,7 +32,10 @@ function Projects() {
 
             setProjects(response.data || []);
         } catch (error) {
-            console.error("Projects Error:", error);
+            console.error(
+                "Projects Error:",
+                error
+            );
 
             setError(
                 error.response?.data?.message ||
@@ -39,6 +50,7 @@ function Projects() {
         fetchProjects();
     }, []);
 
+    // Create project
     const handleCreateProject = async (formData) => {
         try {
             setCreating(true);
@@ -50,7 +62,10 @@ function Projects() {
 
             await fetchProjects();
         } catch (error) {
-            console.error("Create Project Error:", error);
+            console.error(
+                "Create Project Error:",
+                error
+            );
 
             setError(
                 error.response?.data?.message ||
@@ -59,6 +74,80 @@ function Projects() {
         } finally {
             setCreating(false);
         }
+    };
+
+    // Update project
+    const handleEditProject = async (formData) => {
+        try {
+            setUpdating(true);
+            setError("");
+
+            await updateProject(
+                editingProject._id,
+                formData
+            );
+
+            setEditingProject(null);
+            setShowForm(false);
+
+            await fetchProjects();
+        } catch (error) {
+            console.error(
+                "Update Project Error:",
+                error
+            );
+
+            setError(
+                error.response?.data?.message ||
+                "Unable to update project."
+            );
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    // Delete project
+    const handleDeleteProject = async (projectId) => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this project?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setDeleting(true);
+            setError("");
+
+            await deleteProject(projectId);
+
+            await fetchProjects();
+        } catch (error) {
+            console.error(
+                "Delete Project Error:",
+                error
+            );
+
+            setError(
+                error.response?.data?.message ||
+                "Unable to delete project."
+            );
+        } finally {
+            setDeleting(false);
+        }
+    };
+
+    // Open edit form
+    const handleEditClick = (project) => {
+        setEditingProject(project);
+        setShowForm(true);
+    };
+
+    // Close form
+    const handleCancelForm = () => {
+        setShowForm(false);
+        setEditingProject(null);
     };
 
     if (loading) {
@@ -75,8 +164,17 @@ function Projects() {
         <div>
 
             {/* Header */}
-            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-
+            <div
+                className="
+                    mb-8
+                    flex
+                    flex-col
+                    gap-4
+                    sm:flex-row
+                    sm:items-end
+                    sm:justify-between
+                "
+            >
                 <div>
                     <h1 className="text-3xl font-bold text-white">
                         Projects
@@ -89,7 +187,11 @@ function Projects() {
 
                 {!showForm && (
                     <button
-                        onClick={() => setShowForm(true)}
+                        type="button"
+                        onClick={() => {
+                            setEditingProject(null);
+                            setShowForm(true);
+                        }}
                         className="
                             rounded-lg
                             bg-blue-600
@@ -105,7 +207,6 @@ function Projects() {
                         + Add Project
                     </button>
                 )}
-
             </div>
 
             {/* Error */}
@@ -127,18 +228,27 @@ function Projects() {
                 </div>
             )}
 
-            {/* Create Form */}
+            {/* Create / Edit Form */}
             {showForm && (
                 <div className="mb-8">
                     <ProjectForm
-                        onSubmit={handleCreateProject}
-                        onCancel={() => setShowForm(false)}
-                        loading={creating}
+                        initialData={editingProject}
+                        onSubmit={
+                            editingProject
+                                ? handleEditProject
+                                : handleCreateProject
+                        }
+                        onCancel={handleCancelForm}
+                        loading={
+                            editingProject
+                                ? updating
+                                : creating
+                        }
                     />
                 </div>
             )}
 
-            {/* Projects */}
+            {/* Project Grid */}
             {projects.length > 0 ? (
                 <div
                     className="
@@ -153,6 +263,9 @@ function Projects() {
                         <ProjectCard
                             key={project._id}
                             project={project}
+                            onEdit={handleEditClick}
+                            onDelete={handleDeleteProject}
+                            deleting={deleting}
                         />
                     ))}
                 </div>
