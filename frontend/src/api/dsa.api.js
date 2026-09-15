@@ -1,9 +1,9 @@
 import api from "./axios";
 
-export const createProblem = async (ProblemData) => {
+export const createProblem = async (problemData) => {
     const response = await api.post(
         "/dsa",
-        ProblemData
+        problemData
     );
 
     return response.data;
@@ -15,20 +15,30 @@ export const getAllProblems = async () => {
     return response.data;
 };
 
-export const getProblemById = async (ProblemId) => {
-    const response = await api.get(`/dsa/${problemId}`);
+export const getProblemById = async (problemId) => {
+    const response = await api.get(
+        `/dsa/${problemId}`
+    );
 
     return response.data;
 };
 
-export const updateProblem = async(problemId,ProblemData) => {
-    const response = await api.patch(`/dsa/${problemId}`,ProblemData);
+export const updateProblem = async (
+    problemId,
+    problemData
+) => {
+    const response = await api.patch(
+        `/dsa/${problemId}`,
+        problemData
+    );
 
     return response.data;
-}
+};
 
-export const deleteProblem = async(problemId) => {
-    const response = await api.delete(`/dsa/${problemId}`);
+export const deleteProblem = async (problemId) => {
+    const response = await api.delete(
+        `/dsa/${problemId}`
+    );
 
     return response.data;
 };
