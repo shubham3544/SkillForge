@@ -7,6 +7,7 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
     const [platform, setPlatform] = useState("LeetCode");
     const [difficulty, setDifficulty] = useState("Easy");
     const [pattern, setPattern] = useState("");
+    const [newPattern, setNewPattern] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,11 +16,19 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
             return;
         }
 
+        if (
+            pattern === "other" &&
+            !newPattern.trim()
+        ) {
+            return;
+        }
+
         const success = await onAdd({
             title: title.trim(),
             platform,
             difficulty,
-            pattern: pattern || undefined,
+            pattern,
+            newPattern: newPattern.trim(),
         });
 
         if (success) {
@@ -27,15 +36,27 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
             setPlatform("LeetCode");
             setDifficulty("Easy");
             setPattern("");
+            setNewPattern("");
             setIsOpen(false);
         }
     };
 
     return (
-        <div className="mb-6 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+        <div
+            className="
+                mb-6
+                overflow-hidden
+                rounded-2xl
+                border
+                border-slate-800
+                bg-slate-900
+            "
+        >
             <button
                 type="button"
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() =>
+                    setIsOpen(!isOpen)
+                }
                 className="
                     flex
                     w-full
@@ -50,7 +71,9 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
             >
                 <div>
                     <p className="text-sm font-semibold text-white">
-                        {isOpen ? "− Add Problem" : "+ Add Problem"}
+                        {isOpen
+                            ? "− Add Problem"
+                            : "+ Add Problem"}
                     </p>
 
                     {!isOpen && (
@@ -65,7 +88,11 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
                         text-slate-400
                         transition-transform
                         duration-200
-                        ${isOpen ? "rotate-180" : ""}
+                        ${
+                            isOpen
+                                ? "rotate-180"
+                                : ""
+                        }
                     `}
                 >
                     ↓
@@ -83,11 +110,15 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
                             md:grid-cols-[1fr_150px_130px_150px_auto]
                         "
                     >
+                        {/* Problem */}
+
                         <input
                             type="text"
                             value={title}
                             onChange={(e) =>
-                                setTitle(e.target.value)
+                                setTitle(
+                                    e.target.value
+                                )
                             }
                             placeholder="Problem name..."
                             className="
@@ -106,10 +137,14 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
                             "
                         />
 
+                        {/* Platform */}
+
                         <select
                             value={platform}
                             onChange={(e) =>
-                                setPlatform(e.target.value)
+                                setPlatform(
+                                    e.target.value
+                                )
                             }
                             className="
                                 rounded-lg
@@ -150,10 +185,14 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
                             </option>
                         </select>
 
+                        {/* Difficulty */}
+
                         <select
                             value={difficulty}
                             onChange={(e) =>
-                                setDifficulty(e.target.value)
+                                setDifficulty(
+                                    e.target.value
+                                )
                             }
                             className="
                                 rounded-lg
@@ -182,11 +221,22 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
                             </option>
                         </select>
 
+                        {/* Pattern */}
+
                         <select
                             value={pattern}
-                            onChange={(e) =>
-                                setPattern(e.target.value)
-                            }
+                            onChange={(e) => {
+                                setPattern(
+                                    e.target.value
+                                );
+
+                                if (
+                                    e.target.value !==
+                                    "other"
+                                ) {
+                                    setNewPattern("");
+                                }
+                            }}
                             className="
                                 rounded-lg
                                 border
@@ -215,7 +265,13 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
                                     </option>
                                 )
                             )}
+
+                            <option value="other">
+                                Other
+                            </option>
                         </select>
+
+                        {/* Add */}
 
                         <button
                             type="submit"
@@ -239,6 +295,37 @@ function DSAQuickAdd({ onAdd, loading, patterns }) {
                                 : "Add"}
                         </button>
                     </form>
+
+                    {/* New Pattern */}
+
+                    {pattern === "other" && (
+                        <input
+                            type="text"
+                            value={newPattern}
+                            onChange={(e) =>
+                                setNewPattern(
+                                    e.target.value
+                                )
+                            }
+                            placeholder="Enter new pattern..."
+                            className="
+                                mt-3
+                                w-full
+                                rounded-lg
+                                border
+                                border-slate-800
+                                bg-slate-950
+                                px-4
+                                py-3
+                                text-sm
+                                text-white
+                                outline-none
+                                placeholder:text-slate-600
+                                transition
+                                focus:border-slate-600
+                            "
+                        />
+                    )}
                 </div>
             )}
         </div>

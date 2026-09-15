@@ -7,7 +7,10 @@ import {
     updateProblem,
 } from "../api/dsa.api.js";
 
-import { getAllPatterns } from "../api/pattern.api.js";
+import {
+    getAllPatterns,
+    createPattern,
+} from "../api/pattern.api.js";
 
 import DSAQuickAdd from "../components/DSA/DSAQuickAdd.jsx";
 import DSAProblemRow from "../components/DSA/DSAProblemRow.jsx";
@@ -43,8 +46,13 @@ function DSA() {
                     getAllPatterns(),
                 ]);
 
-                setProblems(problemResponse.data || []);
-                setPatterns(patternResponse.data || []);
+                setProblems(
+                    problemResponse.data || []
+                );
+
+                setPatterns(
+                    patternResponse.data || []
+                );
             } catch (error) {
                 console.error(
                     "DSA Problems Error:",
@@ -68,11 +76,43 @@ function DSA() {
             setAdding(true);
             setError("");
 
-            await createProblem(problemData);
+            let patternId = problemData.pattern;
 
-            const response = await getAllProblems();
+            if (
+                problemData.pattern === "other"
+            ) {
+                const patternResponse =
+                    await createPattern({
+                        name: problemData.newPattern,
+                    });
 
-            setProblems(response.data || []);
+                patternId =
+                    patternResponse.data._id;
+            }
+
+            await createProblem({
+                title: problemData.title,
+                platform: problemData.platform,
+                difficulty: problemData.difficulty,
+                pattern:
+                    patternId || undefined,
+            });
+
+            const [
+                problemResponse,
+                patternResponse,
+            ] = await Promise.all([
+                getAllProblems(),
+                getAllPatterns(),
+            ]);
+
+            setProblems(
+                problemResponse.data || []
+            );
+
+            setPatterns(
+                patternResponse.data || []
+            );
 
             return true;
         } catch (error) {
@@ -106,16 +146,18 @@ function DSA() {
                 }
             );
 
-            setProblems((previousProblems) =>
-                previousProblems.map(
-                    (problem) =>
-                        problem._id === problemId
-                            ? {
-                                ...problem,
-                                status,
-                            }
-                            : problem
-                )
+            setProblems(
+                (previousProblems) =>
+                    previousProblems.map(
+                        (problem) =>
+                            problem._id ===
+                            problemId
+                                ? {
+                                    ...problem,
+                                    status,
+                                }
+                                : problem
+                    )
             );
         } catch (error) {
             console.error(
@@ -144,16 +186,18 @@ function DSA() {
                 }
             );
 
-            setProblems((previousProblems) =>
-                previousProblems.map(
-                    (problem) =>
-                        problem._id === problemId
-                            ? {
-                                ...problem,
-                                notes,
-                            }
-                            : problem
-                )
+            setProblems(
+                (previousProblems) =>
+                    previousProblems.map(
+                        (problem) =>
+                            problem._id ===
+                            problemId
+                                ? {
+                                    ...problem,
+                                    notes,
+                                }
+                                : problem
+                    )
             );
 
             return true;
@@ -189,11 +233,13 @@ function DSA() {
 
             await deleteProblem(problemId);
 
-            setProblems((previousProblems) =>
-                previousProblems.filter(
-                    (problem) =>
-                        problem._id !== problemId
-                )
+            setProblems(
+                (previousProblems) =>
+                    previousProblems.filter(
+                        (problem) =>
+                            problem._id !==
+                            problemId
+                    )
             );
         } catch (error) {
             console.error(
@@ -210,29 +256,36 @@ function DSA() {
         }
     };
 
-    const totalProblems = problems.length;
+    const totalProblems =
+        problems.length;
 
-    const solvedProblems = problems.filter(
-        (problem) =>
-            problem.status === "Solved"
-    ).length;
+    const solvedProblems =
+        problems.filter(
+            (problem) =>
+                problem.status === "Solved"
+        ).length;
 
-    const todoProblems = problems.filter(
-        (problem) =>
-            problem.status === "Todo"
-    ).length;
+    const todoProblems =
+        problems.filter(
+            (problem) =>
+                problem.status === "Todo"
+        ).length;
 
-    const revisitProblems = problems.filter(
-        (problem) =>
-            problem.status === "Revisit"
-    ).length;
+    const revisitProblems =
+        problems.filter(
+            (problem) =>
+                problem.status === "Revisit"
+        ).length;
 
-    const filteredProblems = problems.filter(
-        (problem) =>
-            (problem.title || "")
-                .toLowerCase()
-                .includes(search.toLowerCase())
-    );
+    const filteredProblems =
+        problems.filter(
+            (problem) =>
+                (problem.title || "")
+                    .toLowerCase()
+                    .includes(
+                        search.toLowerCase()
+                    )
+        );
 
     const revisionProblems =
         filteredProblems.filter(
@@ -243,7 +296,8 @@ function DSA() {
     const selectedPatternData =
         patterns.find(
             (pattern) =>
-                pattern._id === selectedPattern
+                pattern._id ===
+                selectedPattern
         );
 
     const patternProblems =
@@ -270,6 +324,7 @@ function DSA() {
 
     return (
         <div>
+
             {/* Page Header */}
 
             <div className="mb-8">
@@ -447,11 +502,14 @@ function DSA() {
 
                     {activeTab !== "patterns" && (
                         <div className="relative mb-6">
+
                             <input
                                 type="text"
                                 value={search}
                                 onChange={(e) =>
-                                    setSearch(e.target.value)
+                                    setSearch(
+                                        e.target.value
+                                    )
                                 }
                                 placeholder="Search problems by name..."
                                 className="
@@ -496,11 +554,12 @@ function DSA() {
                                     Clear
                                 </button>
                             )}
+
                         </div>
                     )}
 
 
-                    {/* PATTERNS TAB */}
+                    {/* Patterns Tab */}
 
                     {activeTab === "patterns" ? (
 
@@ -511,7 +570,9 @@ function DSA() {
                                 <button
                                     type="button"
                                     onClick={() =>
-                                        setSelectedPattern(null)
+                                        setSelectedPattern(
+                                            null
+                                        )
                                     }
                                     className="
                                         mb-5
@@ -535,6 +596,7 @@ function DSA() {
                                         p-5
                                     "
                                 >
+
                                     <div className="flex items-center gap-3">
 
                                         <span
@@ -581,7 +643,7 @@ function DSA() {
                                     "
                                 >
 
-                                    <div className="overflow-x-auto scrollbar-thin scrollbar-track-slate-900 scrollbar-thumb-slate-700">
+                                    <div className="overflow-x-auto">
 
                                         <div className="min-w-[980px]">
 
@@ -782,7 +844,7 @@ function DSA() {
                                             </h2>
 
                                             <p className="mt-2 text-sm text-slate-500">
-                                                Create patterns to organize your DSA problems.
+                                                Create patterns while adding DSA problems.
                                             </p>
 
                                         </div>
@@ -797,7 +859,7 @@ function DSA() {
 
                     ) : (
 
-                        /* ALL / REVISION */
+                        /* All / Revision */
 
                         <div
                             className="
@@ -809,7 +871,7 @@ function DSA() {
                             "
                         >
 
-                            <div className="overflow-x-auto scrollbar-thin scrollbar-track-slate-900 scrollbar-thumb-slate-700">
+                            <div className="overflow-x-auto">
 
                                 <div className="min-w-[980px]">
 
@@ -898,12 +960,15 @@ function DSA() {
                 {/* RIGHT SIDE */}
 
                 <div className="xl:sticky xl:top-6 xl:self-start">
+
                     <DSADifficultyChart
                         problems={problems}
                     />
+
                 </div>
 
             </div>
+
         </div>
     );
 }
