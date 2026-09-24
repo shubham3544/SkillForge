@@ -9,33 +9,66 @@ import PublicRoute from "./components/PublicRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Projects from "./Pages/Projects";
 import DSA from "./Pages/Dsa";
+import ResumeVault from "./Pages/ResumeVault";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
+    return (
+        <BrowserRouter>
+            <Routes>
 
-        {/* Public Routes */}
-        <Route path="/" element={<Landing />} />
+                {/* Public Routes */}
 
-        <Route element={<PublicRoute />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-       </Route>
+                <Route path="/" element={<Landing />} />
 
-        {/* Private Routes */}
+                <Route element={<PublicRoute />}>
+                    <Route
+                        path="/login"
+                        element={<Login />}
+                    />
 
-        <Route element = {<ProtectedRoute />}>
-             <Route path="/dashboard" element ={<DashboardLayout />}> 
-             <Route index element={<Dashboard />} />
-             <Route path="/dashboard/projects"element={<Projects />} />
-             <Route path="dsa" element={<DSA />} />
-             </Route>
-        </Route>
+                    <Route
+                        path="/register"
+                        element={<Register />}
+                    />
+                </Route>
 
-      </Routes>
-    </BrowserRouter>
-  );
+
+                {/* Private Routes */}
+
+                <Route element={<ProtectedRoute />}>
+
+                    <Route
+                        path="/dashboard"
+                        element={<DashboardLayout />}
+                    >
+
+                        <Route
+                            index
+                            element={<Dashboard />}
+                        />
+
+                        <Route
+                            path="projects"
+                            element={<Projects />}
+                        />
+
+                        <Route
+                            path="dsa"
+                            element={<DSA />}
+                        />
+
+                        <Route
+                            path="resumes"
+                            element={<ResumeVault />}
+                        />
+
+                    </Route>
+
+                </Route>
+
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
